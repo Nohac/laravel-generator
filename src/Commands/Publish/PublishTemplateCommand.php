@@ -29,22 +29,27 @@ class PublishTemplateCommand extends PublishBaseCommand
     {
         $this->templatesDir = config(
             'infyom.laravel_generator.path.templates_dir',
-            base_path('resources/infyom/infyom-generator-templates/')
+            base_path('resources/infyom/')
         );
 
-        if ($this->publishGeneratorTemplates()) {
+        if ($this->publishGeneratorTemplates('laravel-generator')) {
             $this->publishScaffoldTemplates();
+        }
+
+        $swagger = config('infyom.laravel_generator.add_on.swagger', false);
+        if ($swagger) {
+            $this->publishGeneratorTemplates('swagger-generator');
         }
     }
 
     /**
      * Publishes templates.
      */
-    public function publishGeneratorTemplates()
+    public function publishGeneratorTemplates($templateType)
     {
-        $templatesPath = __DIR__.'/../../../templates';
+        $templatesPath = __DIR__.'/../../../../'.$templateType.'/templates';
 
-        return $this->publishDirectory($templatesPath, $this->templatesDir, 'infyom-generator-templates');
+        return $this->publishDirectory($templatesPath, $this->templatesDir.$templateType.'/templates', $templateType.'/templates');
     }
 
     /**
